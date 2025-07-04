@@ -1,0 +1,15 @@
+{
+  "timestamp": 1751658253420,
+  "operation": {
+    "id": "backend:specifications:openapi"
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/backend/openapi.yaml",
+      "type": "text",
+      "size": 26353,
+      "dependencies": false
+    }
+  ]
+}

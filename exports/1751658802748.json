@@ -1,0 +1,15 @@
+{
+  "timestamp": 1751658802748,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/package.json",
+      "type": "text",
+      "size": 2998,
+      "dependencies": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "timestamp": 1751658160468,
+  "operation": {
+    "id": "db:schemas:zod"
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/backend/schema.ts",
+      "type": "text",
+      "size": 4733,
+      "dependencies": false
+    }
+  ]
+}

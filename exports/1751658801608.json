@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658801608,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_TaskDashboard",
+      "version": "1751658699638"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/UV_TaskDashboard.tsx",
+      "type": "text",
+      "size": 34629,
+      "dependencies": false
+    }
+  ]
+}

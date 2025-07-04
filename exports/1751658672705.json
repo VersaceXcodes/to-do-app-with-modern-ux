@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658672705,
+  "operation": {
+    "id": "webapp:react:store",
+    "refs": {
+      "id": "redux",
+      "version": "latest"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/store/main.tsx",
+      "type": "text",
+      "size": 13008,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658822729,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_HeaderBar",
+      "version": "latest"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/GV_HeaderBar.tsx",
+      "type": "text",
+      "size": 6280,
+      "dependencies": false
+    }
+  ]
+}

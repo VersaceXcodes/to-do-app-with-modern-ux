@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658858039,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_SideBar",
+      "version": "latest"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/GV_SideBar.tsx",
+      "type": "text",
+      "size": 11285,
+      "dependencies": false
+    }
+  ]
+}

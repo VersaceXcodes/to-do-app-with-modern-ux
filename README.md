@@ -1,2 +1,3 @@
-# to-do-app-with-modern-ux
-Project to-do-app-with-modern-ux generated.
+app generated from cofounder/boilerplate
+
+instructions here on how to start api and frontend , whether in parallel or separately

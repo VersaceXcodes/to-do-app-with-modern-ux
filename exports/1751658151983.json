@@ -1,0 +1,15 @@
+{
+  "timestamp": 1751658151983,
+  "operation": {
+    "id": "db:postgres"
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/backend/db.sql",
+      "type": "text",
+      "size": 4631,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658828968,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_CategoryManagement",
+      "version": "latest"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/UV_CategoryManagement.tsx",
+      "type": "text",
+      "size": 16740,
+      "dependencies": false
+    }
+  ]
+}

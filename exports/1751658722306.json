@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658722306,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_Register",
+      "version": "latest"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/UV_Register.tsx",
+      "type": "text",
+      "size": 7519,
+      "dependencies": false
+    }
+  ]
+}

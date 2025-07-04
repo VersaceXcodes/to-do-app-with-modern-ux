@@ -1,0 +1,21 @@
+{
+  "timestamp": 1751658469817,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/backend/package.json",
+      "type": "text",
+      "size": 1147,
+      "dependencies": true
+    },
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/backend/.env",
+      "type": "text",
+      "size": 568,
+      "dependencies": false
+    }
+  ]
+}

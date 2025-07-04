@@ -1,0 +1,899 @@
+openapi: 3.0.0
+info:
+  title: NexGen TaskPad API
+  version: 1.0.0
+  description: User-facing API for NexGen TaskPad, a modern to-do application.
+servers:
+  - url: http://localhost:3000
+    description: Local Development Server
+security:
+  - bearer_auth: []
+paths:
+  /api/register:
+    post:
+      summary: Register a new user account
+      operationId: register_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/create_user_input"
+      responses:
+        "201":
+          description: User registered successfully. Returns user data and auth token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user_auth_response"
+        "400":
+          description: Invalid input or email already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/login:
+    post:
+      summary: Authenticate and log in a user
+      operationId: login_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/login_user_input"
+      responses:
+        "200":
+          description: User logged in successfully. Returns user data and auth token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user_auth_response"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Invalid email or password.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/forgot-password:
+    post:
+      summary: Request a password reset link
+      operationId: forgot_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/forgot_password_input"
+      responses:
+        "200":
+          description: If an account exists, a reset link has been sent.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/message_response"
+        "400":
+          description: Invalid email format.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/reset-password:
+    post:
+      summary: Reset user password using a token
+      operationId: reset_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reset_password_input"
+      responses:
+        "200":
+          description: Password reset successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/message_response"
+        "400":
+          description: Invalid input (e.g., passwords don't match, or password too weak).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Invalid or expired reset token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/logout:
+    post:
+      summary: Log out the authenticated user
+      operationId: logout_user
+      security:
+        - bearer_auth: []
+      responses:
+        "200":
+          description: User logged out successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/message_response"
+        "401":
+          description: Unauthorized. Invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/tasks:
+    post:
+      summary: Create a new task
+      operationId: create_task
+      security:
+        - bearer_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/create_task_input"
+      responses:
+        "201":
+          description: Task created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/task"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+    get:
+      summary: Retrieve a list of tasks for the authenticated user
+      operationId: get_tasks
+      security:
+        - bearer_auth: []
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query for task titles or descriptions.
+        - in: query
+          name: category_id
+          schema:
+            type: string
+          description: Filter tasks by category ID.
+        - in: query
+          name: priority
+          schema:
+            $ref: "#/components/schemas/priority_enum"
+          description: Filter tasks by priority (low, medium, high).
+        - in: query
+          name: is_completed
+          schema:
+            type: boolean
+          description: Filter tasks by completion status.
+        - in: query
+          name: due_date_before
+          schema:
+            type: number
+            format: int64
+          description: Filter tasks due before this Unix timestamp.
+        - in: query
+          name: due_date_after
+          schema:
+            type: number
+            format: int64
+          description: Filter tasks due after this Unix timestamp.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            default: 10
+          description: Maximum number of tasks to return.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            default: 0
+          description: Number of tasks to skip from the beginning.
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+            enum:
+              - title
+              - due_date_at
+              - priority
+              - created_at
+              - updated_at
+              - order_index
+            default: order_index
+          description: Field to sort tasks by.
+        - in: query
+          name: sort_order
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+          description: Sort order (ascending or descending).
+      responses:
+        "200":
+          description: A list of tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/task"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/tasks/{task_id}:
+    patch:
+      summary: Update an existing task (partial update)
+      operationId: update_task
+      security:
+        - bearer_auth: []
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the task to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/update_task_input"
+      responses:
+        "200":
+          description: Task updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/task"
+        "400":
+          description: Invalid input or data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "403":
+          description: Forbidden (User does not own this task).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "404":
+          description: Task not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+    delete:
+      summary: Delete a task
+      operationId: delete_task
+      security:
+        - bearer_auth: []
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the task to delete.
+      responses:
+        "204":
+          description: Task deleted successfully (No Content).
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "403":
+          description: Forbidden (User does not own this task).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "404":
+          description: Task not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/categories:
+    post:
+      summary: Create a new category
+      operationId: create_category
+      security:
+        - bearer_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/create_category_input"
+      responses:
+        "201":
+          description: Category created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/category"
+        "400":
+          description: Invalid input or category name already exists for user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+    get:
+      summary: Retrieve all categories for the authenticated user
+      operationId: get_categories
+      security:
+        - bearer_auth: []
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search query for category names.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            default: 10
+          description: Maximum number of categories to return.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            default: 0
+          description: Number of categories to skip from the beginning.
+        - in: query
+          name: sort_by
+          schema:
+            type: string
+            enum:
+              - name
+              - created_at
+              - updated_at
+            default: name
+          description: Field to sort categories by.
+        - in: query
+          name: sort_order
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: asc
+          description: Sort order (ascending or descending).
+      responses:
+        "200":
+          description: A list of categories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/category"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/categories/{category_id}:
+    patch:
+      summary: Update a category's name
+      operationId: update_category
+      security:
+        - bearer_auth: []
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the category to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/update_category_input"
+      responses:
+        "200":
+          description: Category updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/category"
+        "400":
+          description: Invalid input or category name already exists for user.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "403":
+          description: Forbidden (User does not own this category).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "404":
+          description: Category not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+    delete:
+      summary: Delete a category
+      operationId: delete_category
+      security:
+        - bearer_auth: []
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            type: string
+          description: The ID of the category to delete.
+      responses:
+        "204":
+          description: Category deleted successfully. Tasks in this category are set to
+            'uncategorized'.
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "403":
+          description: Forbidden (User does not own this category).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "404":
+          description: Category not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+  /api/users/me/last-active-view:
+    put:
+      summary: Update the authenticated user's last active view preferences
+      operationId: update_last_active_view
+      security:
+        - bearer_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/last_active_view_input"
+      responses:
+        "200":
+          description: View preferences updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/message_response"
+        "400":
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_response"
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    priority_enum:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+      description: Task priority level.
+    user:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user.
+          readOnly: true
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        created_at:
+          type: number
+          format: int64
+          description: Unix timestamp of account creation.
+          readOnly: true
+        updated_at:
+          type: number
+          format: int64
+          description: Unix timestamp of the last account update.
+          readOnly: true
+        last_login_at:
+          type: number
+          format: int64
+          nullable: true
+          description: Unix timestamp of the user's last successful login.
+          readOnly: true
+        last_active_view:
+          type: object
+          nullable: true
+          description: JSON object storing the last active filter/view settings for the
+            user.
+          properties:
+            filter_type:
+              type: string
+              enum:
+                - category
+                - date
+                - other
+              nullable: true
+            filter_value:
+              type: string
+              nullable: true
+              description: ID for category, or keyword for date (e.g., 'today', 'this_week')
+            show_completed:
+              type: boolean
+              nullable: true
+            sort_order:
+              type: string
+              enum:
+                - asc
+                - desc
+              nullable: true
+    task:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the task.
+          readOnly: true
+        user_id:
+          type: string
+          description: ID of the user who owns the task.
+          readOnly: true
+        category_id:
+          type: string
+          nullable: true
+          description: ID of the category the task belongs to. Null if uncategorized.
+        title:
+          type: string
+          maxLength: 255
+          description: The title/name of the task.
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+          description: Optional details about the task.
+        due_date_at:
+          type: number
+          format: int64
+          nullable: true
+          description: Unix timestamp of the task's due date.
+        priority:
+          $ref: "#/components/schemas/priority_enum"
+          description: The priority level of the task.
+          default: medium
+        is_completed:
+          type: boolean
+          description: Flag indicating if the task is completed.
+          default: false
+        completed_at:
+          type: number
+          format: int64
+          nullable: true
+          description: Unix timestamp when the task was marked completed. Set when
+            is_completed becomes true.
+        order_index:
+          type: number
+          format: int32
+          description: Integer representing the display order within its current view/list.
+        created_at:
+          type: number
+          format: int64
+          description: Unix timestamp of task creation.
+          readOnly: true
+        updated_at:
+          type: number
+          format: int64
+          description: Unix timestamp of the last task update.
+          readOnly: true
+      required:
+        - title
+        - priority
+        - is_completed
+        - order_index
+    category:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the category.
+          readOnly: true
+        user_id:
+          type: string
+          description: ID of the user who owns the category.
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+          description: The name of the category.
+        created_at:
+          type: number
+          format: int64
+          description: Unix timestamp of category creation.
+          readOnly: true
+        updated_at:
+          type: number
+          format: int64
+          description: Unix timestamp of the last category update.
+          readOnly: true
+      required:
+        - name
+    create_user_input:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address.
+          maxLength: 255
+        password:
+          type: string
+          minLength: 8
+          maxLength: 255
+          description: User's password.
+      required:
+        - email
+        - password
+    login_user_input:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        password:
+          type: string
+          description: User's password.
+      required:
+        - email
+        - password
+    forgot_password_input:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address to send the reset link to.
+      required:
+        - email
+    reset_password_input:
+      type: object
+      properties:
+        token:
+          type: string
+          description: The unique token from the reset link.
+        new_password:
+          type: string
+          minLength: 8
+          maxLength: 255
+          description: The new password.
+        confirm_new_password:
+          type: string
+          description: Confirmation for the new password (must match new_password).
+      required:
+        - token
+        - new_password
+        - confirm_new_password
+    create_task_input:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          description: The title/name of the task.
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+          description: Optional details about the task.
+        due_date_at:
+          type: number
+          format: int64
+          nullable: true
+          description: Unix timestamp of the task's due date.
+        priority:
+          $ref: "#/components/schemas/priority_enum"
+          default: medium
+          description: The priority level of the task.
+        category_id:
+          type: string
+          nullable: true
+          description: ID of the category the task belongs to. Null if uncategorized.
+        order_index:
+          type: number
+          format: int32
+          description: The desired display order for the new task. (0 for top, or
+            max_order_index + 1)
+      required:
+        - title
+        - order_index
+    update_task_input:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          description: The updated title of the task.
+        description:
+          type: string
+          maxLength: 5000
+          nullable: true
+          description: The updated description of the task.
+        due_date_at:
+          type: number
+          format: int64
+          nullable: true
+          description: The updated Unix timestamp of the task's due date.
+        priority:
+          $ref: "#/components/schemas/priority_enum"
+          description: The updated priority level of the task.
+        is_completed:
+          type: boolean
+          description: The updated completion status of the task.
+        category_id:
+          type: string
+          nullable: true
+          description: The updated category ID of the task. Null if uncategorized.
+        order_index:
+          type: number
+          format: int32
+          description: Updated order index for drag-and-drop reordering.
+      minProperties: 1
+    create_category_input:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: The name of the new category.
+      required:
+        - name
+    update_category_input:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: The new name for the category.
+      required:
+        - name
+    last_active_view_input:
+      type: object
+      properties:
+        filter_type:
+          type: string
+          enum:
+            - category
+            - date
+            - other
+          nullable: true
+          description: The type of filter currently applied (e.g., "category", "date").
+        filter_value:
+          type: string
+          nullable: true
+          description: The value of the filter (e.g., category ID, "today", "this_week").
+        show_completed:
+          type: boolean
+          nullable: true
+          description: Whether completed tasks are currently being shown.
+        sort_order:
+          type: string
+          enum:
+            - asc
+            - desc
+          nullable: true
+          description: The current manual sort order preference.
+      description: User's last active view settings for persistence.
+    user_auth_response:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/user"
+        token:
+          type: string
+          description: JWT authentication token.
+      required:
+        - user
+        - token
+    message_response:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A descriptive message for the operation's outcome.
+      required:
+        - message
+    error_response:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A detailed error message.
+        code:
+          type: string
+          nullable: true
+          description: An optional application-specific error code.
+        details:
+          type: object
+          nullable: true
+          description: Optional additional error details (e.g., validation errors).
+      required:
+        - message

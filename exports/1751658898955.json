@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658898955,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "GV_SideBar_MobileDrawer",
+      "version": "1751658850067"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/GV_SideBar_MobileDrawer.tsx",
+      "type": "text",
+      "size": 3155,
+      "dependencies": false
+    }
+  ]
+}

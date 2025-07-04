@@ -1,0 +1,19 @@
+{
+  "timestamp": 1751658737696,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_ForgotPassword",
+      "version": "1751658699609"
+    }
+  },
+  "projectId": "to-do-app-with-modern-ux",
+  "files": [
+    {
+      "path": "../../apps/to-do-app-with-modern-ux/vitereact/src/components/views/UV_ForgotPassword.tsx",
+      "type": "text",
+      "size": 6194,
+      "dependencies": false
+    }
+  ]
+}
